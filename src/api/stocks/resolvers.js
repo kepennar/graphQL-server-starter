@@ -1,5 +1,8 @@
 const fetch = require('node-fetch');
 const { createError } = require('apollo-errors');
+const { withFilter } = require('graphql-subscriptions');
+
+const pubsub = require('../../pubsub')();
 
 const DEFAULT_SYMBOL = 'GOOG';
 
@@ -17,6 +20,14 @@ module.exports = {
         throw new ApiError({ data: { statusText: response.statusText } });
       }
       return await response.json();
+    }
+  },
+  Subscription: {
+    realtime: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator('newQuote'),
+        (payload, variables) => payload.channelId === variables.channelId
+      )
     }
   }
 };

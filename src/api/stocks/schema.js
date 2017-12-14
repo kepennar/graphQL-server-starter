@@ -43,6 +43,10 @@ type Quote {
 type Query {
   getQuote(symbol: String): Quote
 }
+
+type Subscription {
+  realtime(symbol: String): Quote
+}
 `;
 
 module.exports = typeDefs;

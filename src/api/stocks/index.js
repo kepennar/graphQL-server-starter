@@ -5,9 +5,9 @@ const {
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
-const types = require('./types');
+const scalars = require('./scalars');
 
 module.exports = makeExecutableSchema({
   typeDefs,
-  resolvers: { ...resolvers, ...types }
+  resolvers: { ...resolvers, ...scalars }
 });
