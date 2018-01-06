@@ -10,23 +10,33 @@ const ApiError = createError('Third party api error', {
   message: 'An error occured requesting a third API'
 });
 
+const getQuoteFromIextrading = async (symbol = DEFAULT_SYMBOL) => {
+  const response = await fetch(
+    `https://api.iextrading.com/1.0/stock/${symbol}/quote`
+  );
+  if (response.status !== 200) {
+    throw new ApiError({ data: { statusText: response.statusText } });
+  }
+  return response.json();
+};
+
+setInterval(async () => {
+  const quote = await getQuoteFromIextrading();
+  pubsub.publish('newQuote', { realtime: quote });
+  console.log('[DEBUG] Publish quote', quote);
+}, 10000);
+
 module.exports = {
   Query: {
     async getQuote(root, { symbol }) {
-      const response = await fetch(
-        `https://api.iextrading.com/1.0/stock/${symbol || DEFAULT_SYMBOL}/quote`
-      );
-      if (response.status !== 200) {
-        throw new ApiError({ data: { statusText: response.statusText } });
-      }
-      return await response.json();
+      return await getQuoteFromIextrading(symbol);
     }
   },
   Subscription: {
     realtime: {
       subscribe: withFilter(
         () => pubsub.asyncIterator('newQuote'),
-        (payload, variables) => payload.channelId === variables.channelId
+        (payload, variables) => payload.realtime.symbol === variables.symbol
       )
     }
   }

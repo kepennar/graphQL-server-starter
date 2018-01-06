@@ -23,4 +23,7 @@ app.use(api.routes(), api.allowedMethods());
 app.use(health());
 
 app.listen(serverConfig.port);
-console.log('listening on port', serverConfig.port);
+console.log(
+  'HTTP server listening on',
+  `http://localhost:${serverConfig.port}`
+);

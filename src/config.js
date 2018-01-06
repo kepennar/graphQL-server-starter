@@ -8,6 +8,12 @@ const config = convict({
       format: 'port',
       default: 3000,
       env: 'PORT'
+    },
+    wsPort: {
+      doc: 'websocket server port',
+      format: 'port',
+      default: 3010,
+      env: 'WS_PORT'
     }
   },
   log: {
